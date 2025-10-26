@@ -15,13 +15,13 @@ WITH tb_freq_valor AS (
 tb_cluster AS (
     SELECT *,
         CASE
-            WHEN qtdeFrequencia <= 10 AND QtdePontosPos > 1500 THEN 'HYPERS'
-            WHEN qtdeFrequencia > 10 AND QtdePontosPOS > 1500 THEN 'EFICIENTES'
-            WHEN qtdeFrequencia < 10 AND QtdePontosPOS >= 750 THEN 'INDECISO'
-            WHEN qtdeFrequencia > 10 AND QtdePontosPOS >= 750 THEN 'ESFORÇADO'
-            WHEN qtdeFrequencia < 5 THEN 'LURKER'
-            WHEN qtdeFrequencia <= 10 THEN 'PREGUIÇOSO'
-            WHEN qtdeFrequencia > 10 THEN 'POTENCIAL'
+            WHEN qtdeFrequencia <= 10 AND QtdePontosPos > 1500 THEN '02-HYPERS'
+            WHEN qtdeFrequencia > 10 AND QtdePontosPOS > 1500 THEN '22-EFICIENTES'
+            WHEN qtdeFrequencia < 10 AND QtdePontosPOS >= 750 THEN '10-INDECISO'
+            WHEN qtdeFrequencia > 10 AND QtdePontosPOS >= 750 THEN '11-ESFORÇADO'
+            WHEN qtdeFrequencia < 5 THEN '00-LURKER'
+            WHEN qtdeFrequencia <= 10 THEN '01-PREGUIÇOSO'
+            WHEN qtdeFrequencia > 10 THEN '02-POTENCIAL'
 
         END AS cluster
     FROM tb_freq_valor
