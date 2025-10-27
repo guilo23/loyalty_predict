@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 # %%
 
-engine = sqlalchemy.create_engine("sqlite:///../../database.db")
+engine = sqlalchemy.create_engine("sqlite:///../../loyaltySystem/database.db")
 # %%
 
 def import_query(path):
