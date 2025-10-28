@@ -3,12 +3,10 @@ from tqdm import tqdm
 import pandas as pd
 import sqlalchemy
 
-
 def import_query(path):
     with open(path) as open_file:
         query = open_file.read()
     return query
-
 
 def date_range(start, stop, monthly=False):
     dates = []
@@ -22,11 +20,10 @@ def date_range(start, stop, monthly=False):
     
     return dates
 
-
 def exec_query(table, db_origin, db_target, dt_start, dt_stop, monthly, mode='append'):
     
-    engine_app = sqlalchemy.create_engine(f"sqlite:///../../data/{db_origin}/database.db")
-    engine_analytical = sqlalchemy.create_engine(f"sqlite:///../../data/{db_target}/database.db")
+    engine_app = sqlalchemy.create_engine(f"sqlite:///../../{db_origin}/database.db")
+    engine_analytical = sqlalchemy.create_engine(f"sqlite:///../../{db_target}/database.db")
 
     query = import_query(f"{table}.sql")
     dates = date_range(dt_start, dt_stop, monthly)
@@ -45,5 +42,5 @@ def exec_query(table, db_origin, db_target, dt_start, dt_stop, monthly, mode='ap
         query_format = query.format(date=i)
         df = pd.read_sql(query_format, engine_app)
         df.to_sql(table, engine_analytical, index=False, if_exists=mode)
-
+print(df)
 # %%
