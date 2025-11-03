@@ -1,15 +1,16 @@
 # %%
+import argparse
+import datetime
 from tqdm import tqdm
 import pandas as pd
 import sqlalchemy
-import argparse
-import sys
-import datetime
+
 
 def import_query(path):
     with open(path) as open_file:
         query = open_file.read()
     return query
+
 
 def date_range(start, stop, monthly=False):
     dates = []
@@ -23,7 +24,8 @@ def date_range(start, stop, monthly=False):
     
     return dates
 
-def exec_query(table , db_origin, db_target, dt_start, dt_stop, monthly, mode='append'):
+
+def exec_query(table, db_origin, db_target, dt_start, dt_stop, monthly, mode='append'):
     
     engine_app = sqlalchemy.create_engine(f"sqlite:///../../{db_origin}/database.db")
     engine_analytical = sqlalchemy.create_engine(f"sqlite:///../../{db_target}/database.db")
@@ -44,31 +46,20 @@ def exec_query(table , db_origin, db_target, dt_start, dt_stop, monthly, mode='a
         
         query_format = query.format(date=i)
         df = pd.read_sql(query_format, engine_app)
-        df.to_sql(table, engine_analytical, index=False, if_exists=mode)
-
-
-sys.argv = [
-    "script_name", 
-    "--db_origin", "loyaltySystem", 
-    "--db_target", "analytics", 
-    "--table", "life_cycle", 
-    "--start", "2024-01-01", 
-    "--stop", "2025-10-01", 
-    "--mode", "append"
-]
+        df.to_sql(table, engine_analytical, index=False, if_exists='replace')
 
 
 def main():
     
     parser = argparse.ArgumentParser()
-    parser.add_argument("--db_origin", choices=['loyaltySystem', 'educationPlatform', 'analytics'],
+    parser.add_argument("--db_origin", choices=['loyaltySystem', 'educationPlataform', 'analytics'],
                         default='loyaltySystem')
     
     parser.add_argument("--db_target", choices=['analytics'], default='analytics')
     parser.add_argument("--table", type=str, help="Tabela que será processada com o mesmo nome do arquivo.")
 
     now = datetime.datetime.now().strftime("%Y-%m-%d")
-    parser.add_argument("--start", type=str, default=now)
+    parser.add_argument("--start", type=str, default='2024-03-01')
     parser.add_argument("--stop", type=str, default=now)
     parser.add_argument("--monthly", action='store_true')
     parser.add_argument("--mode", choices=['append', 'replace'])
@@ -79,5 +70,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
 # %%

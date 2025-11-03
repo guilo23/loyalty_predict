@@ -6,14 +6,14 @@ WITH tb_life_cycle_atual AS (
 
         FROM life_cycle
 
-        WHERE dtRef =  DATE('2025-09-01','-1 day')
+        WHERE dtRef =  DATE('{date}','-1 day')
 ),
 tb_life_cycle_D28 AS (
     SELECT idCliente,
             descLifeCycle
 
     FROM life_cycle
-    WHERE dtRef = date('2025-09-01','-29 day')
+    WHERE dtRef = date('{date}','-29 day')
 
 ),
 tb_share_ciclos AS (
@@ -27,7 +27,7 @@ tb_share_ciclos AS (
         1. * SUM(CASE WHEN descLifeCycle = '02-REBORN' THEN 1 ELSE 0 END) / COUNT(*) AS pctREBORN
 
         FROM life_cycle
-        WHERE dtRef = DATE('2025-09-01','-1 day')
+        WHERE dtRef = DATE('{date}','-1 day')
 
         GROUP BY idCliente
 ),
