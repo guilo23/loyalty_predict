@@ -1,12 +1,16 @@
 # %%
+import argparse
+import datetime
 from tqdm import tqdm
 import pandas as pd
 import sqlalchemy
+
 
 def import_query(path):
     with open(path) as open_file:
         query = open_file.read()
     return query
+
 
 def date_range(start, stop, monthly=False):
     dates = []
@@ -19,6 +23,7 @@ def date_range(start, stop, monthly=False):
         return [i for i in dates if i.endswith("01")]
     
     return dates
+
 
 def exec_query(table, db_origin, db_target, dt_start, dt_stop, monthly, mode='append'):
     
@@ -41,6 +46,28 @@ def exec_query(table, db_origin, db_target, dt_start, dt_stop, monthly, mode='ap
         
         query_format = query.format(date=i)
         df = pd.read_sql(query_format, engine_app)
-        df.to_sql(table, engine_analytical, index=False, if_exists=mode)
-print(df)
+        df.to_sql(table, engine_analytical, index=False, if_exists='append')
+
+
+def main():
+    
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--db_origin", choices=['loyaltySystem', 'educationPlataform', 'analytics'],
+                        default='loyaltySystem')
+    
+    parser.add_argument("--db_target", choices=['analytics'], default='analytics')
+    parser.add_argument("--table", type=str, help="Tabela que será processada com o mesmo nome do arquivo.")
+
+    now = datetime.datetime.now().strftime("%Y-%m-%d")
+    parser.add_argument("--start", type=str, default='2024-03-01')
+    parser.add_argument("--stop", type=str, default=now)
+    parser.add_argument("--monthly", action='store_true')
+    parser.add_argument("--mode", choices=['append', 'replace'])
+    args = parser.parse_args()
+    
+    exec_query(args.table, args.db_origin, args.db_target, args.start, args.stop, args.monthly)
+
+
+if __name__ == "__main__":
+    main()
 # %%

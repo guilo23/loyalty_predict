@@ -4,7 +4,7 @@ WITH tb_usuario_cursos AS (
         COUNT(descSlugCursoEpisodio) AS qtdeEps
 
     FROM cursos_episodios_completos
-    WHERE dtCriacao < '2025-09-01'
+    WHERE dtCriacao < '{date}'
     GROUP BY idUsuario,descSlugCurso
 ),
 tb_curso_total_eps AS (
@@ -112,7 +112,7 @@ UNION ALL
 ),
 tb_ultima_atividade AS (
 SELECT idUsuario,
-        ROUND(MIN(JULIANDAY('2025-10-01') - JULIANDAY(dtCriacao))) AS ultimaInteracao
+        ROUND(MIN(JULIANDAY('{date}') - JULIANDAY(dtCriacao))) AS ultimaInteracao
 FROM tb_atividade
 
 GROUP BY idUsuario
@@ -122,51 +122,12 @@ tb_join AS (
             t2.ultimaInteracao,
             t1.qtdeCursoCompletos,
             t1.qtdeCursoImcompletos,
-            t1.python2025,
-            t1.github2025,
             t1.estatistica2025,
-            t1.github2025,
-            t1.python2025,
-            t1.sql2025,
-            t1.github2025,
-            t1.github2025,
-            t1.github2025,
-            t1.python2025,
-            t1.github2025,
-            t1.python2025,
-            t1.python2025,
-            t1.github2025,
-            t1.python2025,
-            t1.github2025,
-            t1.pandas2025,
-            t1.python2025,
             t1.sql2020,
-            t1.sql2020,
-            t1.github2025,
-            t1.python2025,
-            t1.python2025,
-            t1.sql2025,
-            t1.github2025,
-            t1.python2025,
-            t1.python2025,
-            t1.python2025,
-            t1.python2025,
-            t1.github2025,
-            t1.pandas2024,
-            t1.pandas2025,
-            t1.python2025,
-            t1.python2025,
-            t1.sql2020,
-            t1.estatistica2024,
             t1.mlflow2025,
-            t1.pandas2025,
             t1.estatistica2024,
-            t1.github2025,
             t1.github2024,
-            t1.github2025,
             t1.pandas2024,
-            t1.pandas2025,
-            t1.python2025,
             t1.github2025,
             t1.python2025,
             t1.sql2025,
@@ -178,6 +139,6 @@ tb_join AS (
     INNER JOIN usuarios_tmw AS t3
     ON t1.idUsuario = t3.idUsuario
 )
-SELECT DATE('2025-10-01','-1 day') AS detRef,
+SELECT DATE('{date}','-1 day') AS detRef,
         *
 FROM tb_join
