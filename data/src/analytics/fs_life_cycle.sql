@@ -1,6 +1,5 @@
 WITH tb_life_cycle_atual AS (
         SELECT idCliente,
-        dtRef,
         qtdeFrequencia,
         descLifeCycle
 
@@ -63,6 +62,7 @@ tb_join AS (
         LEFT JOIN tb_avg_ciclos AS t4
         ON t1.descLifeCycle = t4.descLifeCycle
 )
-SELECT *
-FROM tb_join;
+SELECT date('{date}', '-1 day') AS dtRef,
+       *
 
+FROM tb_join

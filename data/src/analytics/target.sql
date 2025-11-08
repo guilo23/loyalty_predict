@@ -1,3 +1,5 @@
+CREATE TABLE abt_fiel AS
+
 WITH tb_join AS (
     SELECT t1.dtRef,
         t1.idCliente,
@@ -44,7 +46,23 @@ SELECT t1.*,
         t2.qteTrocaStreamElements,
         t2.qteReembolsoStreamElements,
         t2.qtdeRPG,
-        t2.qtdeChurnModel
+        t2.qtdeChurnModel,
+        t4.detRef , 
+        t4.idTMWCliente, 
+        t4.ultimaInteracao, 
+        t4.qtdeCursoCompletos, 
+        t4.qtdeCursoImcompletos, 
+        t4.estatistica2025, 
+        t4.sql2020, 
+        t4.mlflow2025, 
+        t4.estatistica2024, 
+        t4.github2024, 
+        t4.pandas2024, 
+        t4.github2025, 
+        t4.python2025, 
+        t4.sql2025, 
+        t4.pandas2025 
+        
 
 
 
@@ -52,4 +70,12 @@ FROM tb_cohort AS t1
 LEFT JOIN fs_transacional AS t2
 ON t1.idCLiente = t2.idCliente
 AND t1.dtRef = t2.dtRef
-LIMIT 100
+
+-- LEFT JOIN fs_lifeCycle AS t3
+-- ON t1.idCliente = t3.idCliente
+-- AND t1.dtRef = t3.dtRef
+
+    LEFT JOIN fs_education AS t4
+    ON t1.idCliente = t4.idTMWCliente
+    AND t1.dtRef = t4.detRef
+

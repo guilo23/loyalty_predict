@@ -46,7 +46,7 @@ def exec_query(table, db_origin, db_target, dt_start, dt_stop, monthly, mode='ap
         
         query_format = query.format(date=i)
         df = pd.read_sql(query_format, engine_app)
-        df.to_sql(table, engine_analytical, index=False, if_exists='replace')
+        df.to_sql(table, engine_analytical, index=False, if_exists='append')
 
 
 def main():
