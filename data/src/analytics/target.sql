@@ -1,4 +1,4 @@
-CREATE TABLE abt_fiel AS
+CREATE TABLE IF NOT EXISTS abt_fiel AS 
 
 WITH tb_join AS (
     SELECT t1.dtRef,
@@ -47,7 +47,19 @@ SELECT t1.*,
         t2.qteReembolsoStreamElements,
         t2.qtdeRPG,
         t2.qtdeChurnModel,
-        t4.detRef , 
+        t4.detRef,
+        t3.qtdeFrequencia,
+        t3.descLifeCycleAtual,
+        t3.descLifeCycleD28,
+        t3.pctCurioso,
+        t3.pctFiel,
+        t3.pctTurista,
+        t3.pctDesencantada,
+        t3.pctZumbi,
+        t3.pctReconquistado,
+        t3.pctReborn,
+        t3.avgFreqGrupo,
+        t3.ratioFreqGrupo, 
         t4.idTMWCliente, 
         t4.ultimaInteracao, 
         t4.qtdeCursoCompletos, 
@@ -71,11 +83,11 @@ LEFT JOIN fs_transacional AS t2
 ON t1.idCLiente = t2.idCliente
 AND t1.dtRef = t2.dtRef
 
--- LEFT JOIN fs_lifeCycle AS t3
--- ON t1.idCliente = t3.idCliente
--- AND t1.dtRef = t3.dtRef
+LEFT JOIN fs_life_Cycle AS t3
+ON t1.idCliente = t3.idCliente
+AND t1.dtRef = t3.dtRef
 
-    LEFT JOIN fs_education AS t4
-    ON t1.idCliente = t4.idTMWCliente
-    AND t1.dtRef = t4.detRef
+LEFT JOIN fs_education AS t4
+ON t1.idCliente = t4.idTMWCliente
+AND t1.dtRef = t4.detRef
 
