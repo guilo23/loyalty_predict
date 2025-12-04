@@ -13,10 +13,11 @@ conn = sqlalchemy.create_engine("sqlite:///../../analytics/database.db")
 
 #SAMPLE - IMPORT DOS DADOS
 
-df = pd.read_sql("abt_fiel",conn)
+df = pd.read_sql("select * from abt_fiel",conn)
 df.head()
 # %%
-
+for i in df.columns:
+        print(i,type(i))
 # SAMPLE OOT
 
 df_oot = df[df['dtRef']==df['dtRef'].max()].reset_index(drop=True)
@@ -58,9 +59,6 @@ cat_features = ['descLifeCycleAtual', 'descLifeCycleD28','detRef','idTMWCliente'
 num_features = list(set(features) - set(cat_features))
 num_features
 
-
-
-
 df_train = X_train.copy()
 df_train[target] = Y_train.copy()
 
@@ -77,5 +75,83 @@ df_train.groupby('descLifeCycleAtual')[target].mean()
 
 df_train.groupby('descLifeCycleD28')[target].mean()
 
-len(num_features)
+# MODIFY
+
+X_train[num_features] = X_train[num_features].astype(float)
+
+from feature_engine import selection
+
+to_remove = bivariada[bivariada['ratio']==1].index.tolist()
+
+drop_features = selection.DropFeatures(to_remove)
+
+x_train_transform = drop_features.fit_transform(X_train,Y_train)
+
+# %%
+from feature_engine import imputation
+from feature_engine import encoding
+
+cat_features = ['descLifeCycleAtual','descLifeCycleD28']
+
+onehot = encoding.OneHotEncoder(variables=cat_features)
+
+fill_0 = ['github2025','python2025']
+imput_0 = imputation.ArbitraryNumberImputer(arbitrary_number=0,variables=fill_0)
+
+input_new = imputation.CategoricalImputer(fill_value='Não Usuario',
+                                          variables=['descLifeCycleAtual','descLifeCycleD28'])
+
+input_1000 = imputation.ArbitraryNumberImputer(arbitrary_number=1000,
+                                          variables=['avgIntervalDiasVida',
+                                                     'avgIntervalD28',
+                                                     'ultimaInteracao'])
+x_train_transform = drop_features.fit_transform(X_train)
+x_train_transform = imput_0.fit_transform(x_train_transform)
+x_train_transform = input_new.fit_transform(x_train_transform)
+x_train_transform = input_1000.fit_transform(x_train_transform)
+x_train_transform = onehot.fit_transform(x_train_transform)
+
+
+x_train_transform -= x_train_transform['detRef']
+
+x_train_transform.head()
+
+from sklearn import tree
+
+model = tree.DecisionTreeClassifier(random_state=42)
+model.fit(x_train_transform,Y_train)
+
+# %%
+
+# assess
+
+from sklearn import metrics
+
+
+
+y_pred_train = model.predict(x_train_transform)
+y_proba_train = model.predict_proba(x_train_transform)
+
+acc_train = metrics.accuracy_score(Y_train,y_pred_train)
+auc_train = metrics.roc_auc_score(Y_train,y_proba_train[:,1])
+print(f"Acuracia Treino: {(acc_train*100):.2f}%")
+print(f"AUC Treino: {(auc_train*100):.2f}%")
+
+
+x_test_transform = drop_features.transform(X_test)
+x_test_transform = imput_0.transform(x_test_transform)
+x_test_transform = input_new.transform(x_test_transform)
+x_test_transform = input_1000.transform(x_test_transform)
+x_test_transform = onehot.transform(x_test_transform)
+
+x_test_transform -= x_test_transform['detRef']
+
+y_pred_test = model.predict(x_test_transform)
+y_proba_test = model.predict_proba(x_test_transform)
+
+
+acc_test = metrics.accuracy_score(Y_test,y_pred_test)
+auc_test = metrics.roc_auc_score(Y_test,y_proba_test[:,1])
+print(f"Acuracia Teste: {(acc_test*100):.2f}%")
+print(f"AUC Teste: {(auc_test*100):.2f}%")
 # %%
